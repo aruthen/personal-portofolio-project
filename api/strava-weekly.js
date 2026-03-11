@@ -57,7 +57,7 @@ export default async function handler(req, res) {
     const accessToken = tokenData.access_token
 
     const now = Date.now()
-    const weeksToShow = 8
+    const weeksToShow = 12
     const afterUnix = Math.floor(now / 1000) - weeksToShow * 7 * 24 * 60 * 60
 
     const activitiesResponse = await fetch(
@@ -107,11 +107,25 @@ export default async function handler(req, res) {
       weekStart.setUTCDate(weekStart.getUTCDate() - i * 7)
       const weekKey = weekStart.toISOString().slice(0, 10)
       const existingWeek = weekMap.get(weekKey)
+      
+      // Generate relative week label
+      let relativeLabel = ''
+      if (i === 0) {
+        relativeLabel = 'minggu ini'
+      } else if (i === 1) {
+        relativeLabel = '1 minggu yang lalu'
+      } else {
+        relativeLabel = `${i} minggu yang lalu`
+      }
 
       allWeeks.push(
-        existingWeek || {
+        existingWeek ? {
+          ...existingWeek,
+          relativeLabel,
+        } : {
           weekKey,
           weekLabel: formatWeekLabel(weekStart),
+          relativeLabel,
           distanceKm: 0,
           movingTimeMinutes: 0,
           elevGainMeters: 0,

@@ -132,7 +132,7 @@
 
         <section class="mt-8 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
           <h2 class="text-lg font-semibold text-zinc-100">Grafik Lari Mingguan (Strava)</h2>
-          <p class="mt-1 text-sm text-zinc-400">Data 8 minggu terakhir dari akun Strava.</p>
+          <p class="mt-1 text-sm text-zinc-400">Data 12 minggu terakhir dari akun Strava. Klik titik untuk melihat detail.</p>
 
           <p v-if="isLoadingStrava" class="mt-4 text-sm text-zinc-300">Memuat data lari dari Strava...</p>
           <p v-else-if="stravaError" class="mt-4 text-sm text-red-300">{{ stravaError }}</p>
@@ -165,8 +165,10 @@
                   :key="point.key"
                   :cx="point.x"
                   :cy="point.y"
-                  r="1.2"
-                  fill="#fdba74"
+                  :r="selectedWeekKey === point.key ? 1.8 : 1.2"
+                  :fill="selectedWeekKey === point.key ? '#f97316' : '#fdba74'"
+                  class="cursor-pointer transition-all"
+                  @click="selectedWeekKey = point.key"
                 />
               </svg>
 
@@ -177,15 +179,32 @@
               </div>
             </div>
 
-            <div class="grid gap-2 text-xs text-zinc-300 sm:grid-cols-2">
-              <div
-                v-for="week in stravaWeeks"
-                :key="`meta-${week.weekKey}`"
-                class="rounded-md bg-zinc-800/60 px-3 py-2"
-              >
-                <span class="font-medium text-zinc-200">{{ week.weekLabel }}</span>
-                <span class="ml-2">{{ week.distanceKm }} km • {{ week.runCount }}x</span>
+            <div v-if="selectedWeekData" class="rounded-lg border border-orange-700/50 bg-orange-900/20 p-4">
+              <h3 class="text-lg font-semibold text-orange-200">{{ selectedWeekData.relativeLabel }}</h3>
+              <p class="text-xs text-orange-300">{{ selectedWeekData.weekLabel }}</p>
+              
+              <div class="mt-3 grid grid-cols-3 gap-3">
+                <div class="rounded-md bg-orange-900/40 px-2 py-2">
+                  <p class="text-[10px] text-orange-400">Jarak</p>
+                  <p class="mt-1 font-semibold text-orange-100">{{ selectedWeekData.distanceKm }} km</p>
+                </div>
+                <div class="rounded-md bg-orange-900/40 px-2 py-2">
+                  <p class="text-[10px] text-orange-400">Durasi</p>
+                  <p class="mt-1 font-semibold text-orange-100">{{ selectedWeekData.movingTimeMinutes }} min</p>
+                </div>
+                <div class="rounded-md bg-orange-900/40 px-2 py-2">
+                  <p class="text-[10px] text-orange-400">Sesi</p>
+                  <p class="mt-1 font-semibold text-orange-100">{{ selectedWeekData.runCount }}x</p>
+                </div>
               </div>
+              <div v-if="selectedWeekData.elevGainMeters > 0" class="mt-2 rounded-md bg-orange-900/40 px-2 py-2">
+                <p class="text-[10px] text-orange-400">Elevasi</p>
+                <p class="mt-1 font-semibold text-orange-100">{{ selectedWeekData.elevGainMeters }} m</p>
+              </div>
+            </div>
+
+            <div v-else class="rounded-lg border border-zinc-700/50 bg-zinc-800/30 p-4 text-center text-sm text-zinc-400">
+              Klik titik pada grafik untuk melihat detail minggu
             </div>
           </div>
         </section>
@@ -277,6 +296,7 @@ const instagramPhotos = ref([
 const stravaWeeks = ref([])
 const isLoadingStrava = ref(true)
 const stravaError = ref('')
+const selectedWeekKey = ref(null)
 const stravaSummary = ref({
   totalDistanceKm: 0,
   totalRuns: 0,
@@ -316,6 +336,11 @@ const stravaLineNodes = computed(() => {
 })
 
 const stravaLinePoints = computed(() => stravaLineNodes.value.map((node) => `${node.x},${node.y}`).join(' '))
+
+const selectedWeekData = computed(() => {
+  if (!selectedWeekKey.value) return null
+  return stravaWeeks.value.find((week) => week.weekKey === selectedWeekKey.value)
+})
 
 
 async function fetchGithubLanguages() {
