@@ -4,7 +4,7 @@
       <article
         v-for="(photo, index) in instagramPhotos"
         :key="index"
-        class="group relative aspect-[4/4] overflow-hidden bg-zinc-950"
+        class="group relative aspect-[4/5] overflow-hidden bg-zinc-950"
       >
         <a :href="photo.postUrl" target="_blank" rel="noopener noreferrer">
           <div v-if="photo.isLoading" class="flex h-full w-full items-center justify-center bg-zinc-800">
@@ -17,10 +17,7 @@
             v-else
             :src="photo.thumbnailUrl"
             :alt="`Instagram post ${index + 1}`"
-            :class="[
-              'h-full w-full transition duration-500 group-hover:scale-105',
-              photo.fitMode === 'contain' ? 'bg-black object-contain p-1' : 'object-cover',
-            ]"
+            class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
             loading="lazy"
           />
           <div class="absolute inset-0 bg-black/30 transition duration-300 group-hover:bg-black/10"></div>
@@ -200,21 +197,18 @@ const instagramPhotos = ref([
     postUrl: 'https://www.instagram.com/p/DS-IxdyCer9/',
     caption: 'Morning run 🏃',
     thumbnailUrl: null,
-    fitMode: 'contain',
     isLoading: true,
   },
   {
     postUrl: 'https://www.instagram.com/p/DU79Xn_CfSY/',
     caption: 'Adventure time ✨',
     thumbnailUrl: null,
-    fitMode: 'contain',
     isLoading: true,
   },
   {
     postUrl: 'https://www.instagram.com/reel/DVgThIxiXvh/',
     caption: 'Cycling journey 🚴',
     thumbnailUrl: null,
-    fitMode: 'cover',
     isLoading: true,
   },
 ])
