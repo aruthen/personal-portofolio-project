@@ -13,16 +13,24 @@
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <img
-            v-else
-            :src="photo.thumbnailUrl"
-            :alt="`Instagram post ${index + 1}`"
-            :class="[
-              'h-full w-full object-center',
-              index === 2 ? 'object-cover' : 'bg-black object-contain',
-            ]"
-            loading="lazy"
-          />
+          <template v-else>
+            <img
+              v-if="index !== 2"
+              :src="photo.thumbnailUrl"
+              :alt="`Instagram background ${index + 1}`"
+              class="absolute inset-0 h-full w-full scale-110 object-cover blur-xl brightness-50"
+              loading="lazy"
+            />
+            <img
+              :src="photo.thumbnailUrl"
+              :alt="`Instagram post ${index + 1}`"
+              :class="[
+                'relative z-10 h-full w-full object-center',
+                index === 2 ? 'object-cover' : 'object-contain',
+              ]"
+              loading="lazy"
+            />
+          </template>
         </a>
       </article>
     </section>
