@@ -403,12 +403,19 @@ async function fetchStravaWeekly() {
 async function fetchInstagramThumbnails() {
   for (const photo of instagramPhotos.value) {
     try {
-      const response = await fetch(`/api/instagram-embed?url=${encodeURIComponent(photo.postUrl)}`)
+      const fetchUrl = `/api/instagram-embed?url=${encodeURIComponent(photo.postUrl)}`
+      console.log('Fetching Instagram thumbnail:', fetchUrl)
+      
+      const response = await fetch(fetchUrl)
       const data = await response.json()
+      
+      console.log('Instagram API response:', { status: response.ok, data })
       
       if (response.ok && data.thumbnail_url) {
         photo.thumbnailUrl = data.thumbnail_url
+        console.log('Thumbnail loaded:', photo.thumbnailUrl.substring(0, 50) + '...')
       } else {
+        console.warn('No thumbnail in response or API error:', data)
         photo.thumbnailUrl = '/instagram-fallback.svg'
       }
     } catch (error) {
