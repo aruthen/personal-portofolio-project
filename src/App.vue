@@ -17,7 +17,10 @@
             v-else
             :src="photo.thumbnailUrl"
             :alt="`Instagram post ${index + 1}`"
-            class="h-full w-full bg-black object-contain object-center"
+            :class="[
+              'h-full w-full object-center',
+              index === 2 ? 'object-cover' : 'bg-black object-contain',
+            ]"
             loading="lazy"
           />
         </a>
