@@ -1,36 +1,5 @@
 <template>
   <div class="min-h-screen bg-zinc-900 text-zinc-100">
-    <section class="grid grid-cols-1 overflow-hidden md:grid-cols-3">
-      <article
-        v-for="(photo, index) in instagramPhotos"
-        :key="index"
-        class="group relative aspect-[4/5] overflow-hidden bg-zinc-950"
-      >
-        <a :href="photo.postUrl" target="_blank" rel="noopener noreferrer">
-          <div v-if="photo.isLoading" class="flex h-full w-full items-center justify-center bg-zinc-800">
-            <svg class="h-8 w-8 animate-spin text-zinc-500" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          </div>
-          <template v-else>
-            <img
-              :src="photo.thumbnailUrl"
-              :alt="`Instagram background ${index + 1}`"
-              class="absolute inset-0 h-full w-full scale-110 object-cover blur-xl brightness-50"
-              loading="lazy"
-            />
-            <img
-              :src="photo.thumbnailUrl"
-              :alt="`Instagram post ${index + 1}`"
-              class="relative z-10 h-full w-full object-contain object-center"
-              loading="lazy"
-            />
-          </template>
-        </a>
-      </article>
-    </section>
-
     <main class="mx-auto w-full max-w-4xl px-6 py-10 md:px-6 md:py-14">
       <section class="w-full rounded-2xl border border-zinc-800 bg-zinc-900/70 p-8 md:p-10">
         <img
@@ -198,26 +167,6 @@ const githubUsername = 'aruthen'
 const languageStats = ref([])
 const isLoadingLanguages = ref(true)
 const languageError = ref('')
-const instagramPhotos = ref([
-  {
-    postUrl: 'https://www.instagram.com/p/DS-IxdyCer9/',
-    caption: 'Morning run 🏃',
-    thumbnailUrl: null,
-    isLoading: true,
-  },
-  {
-    postUrl: 'https://www.instagram.com/p/DU79Xn_CfSY/',
-    caption: 'Adventure time ✨',
-    thumbnailUrl: null,
-    isLoading: true,
-  },
-  {
-    postUrl: 'https://www.instagram.com/reel/DVgThIxiXvh/',
-    caption: 'Cycling journey 🚴',
-    thumbnailUrl: null,
-    isLoading: true,
-  },
-])
 const stravaWeeks = ref([])
 const isLoadingStrava = ref(true)
 const stravaError = ref('')
@@ -350,36 +299,8 @@ async function fetchStravaWeekly() {
   }
 }
 
-async function fetchInstagramThumbnails() {
-  for (const photo of instagramPhotos.value) {
-    try {
-      const fetchUrl = `/api/instagram-embed?url=${encodeURIComponent(photo.postUrl)}`
-      console.log('Fetching Instagram thumbnail:', fetchUrl)
-      
-      const response = await fetch(fetchUrl)
-      const data = await response.json()
-      
-      console.log('Instagram API response:', { status: response.ok, data })
-      
-      if (response.ok && data.thumbnail_url) {
-        photo.thumbnailUrl = data.thumbnail_url
-        console.log('Thumbnail loaded:', photo.thumbnailUrl.substring(0, 50) + '...')
-      } else {
-        console.warn('No thumbnail in response or API error:', data)
-        photo.thumbnailUrl = '/instagram-fallback.svg'
-      }
-    } catch (error) {
-      console.error('Failed to fetch Instagram thumbnail:', error)
-      photo.thumbnailUrl = '/instagram-fallback.svg'
-    } finally {
-      photo.isLoading = false
-    }
-  }
-}
-
 onMounted(() => {
   fetchGithubLanguages()
   fetchStravaWeekly()
-  fetchInstagramThumbnails()
 })
 </script>
