@@ -1,11 +1,11 @@
-# Personal Portofolio Project (Tahap 1)
+# Personal Portofolio Project
 
 Project portfolio nyata yang akan dikembangkan bertahap.
 
 ## Nama Folder Project
 - `personal-portofolio-project`
 
-## Scope Tahap 1
+## Scope
 - Landing section
 - About section
 - Setup deploy siap Vercel
@@ -36,7 +36,7 @@ npm run preview
 4. Build command: `npm run build`
 5. Output directory: `dist`
 
-## Rencana Tahap Berikutnya
+## Rencana Pengembangan Berikutnya
 - Tambah section Projects
 - Tambah Contact section
 - Tambah data project dari JSON
