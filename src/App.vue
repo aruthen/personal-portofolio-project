@@ -57,6 +57,34 @@
               </a>
         </div>
 
+        <section class="mt-8 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="text-lg font-semibold text-zinc-100">LinkedIn</h2>
+            <a
+              href="https://linkedin.com/in/marutha-wira-yuda-41704a112"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-full border border-zinc-700 bg-black px-3 py-1 text-xs text-zinc-200 transition hover:border-zinc-500 hover:bg-zinc-900"
+            >
+              Open Profile
+            </a>
+          </div>
+
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            <a
+              v-for="item in linkedInCertificates"
+              :key="item.title"
+              :href="item.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-lg border border-zinc-700 bg-zinc-900/50 p-3 transition hover:border-zinc-500"
+            >
+              <p class="text-sm font-semibold text-zinc-100">{{ item.title }}</p>
+              <p class="mt-1 text-xs text-zinc-400">{{ item.issuer }}</p>
+            </a>
+          </div>
+        </section>
+
         <section class="mt-10 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
           <h2 class="text-lg font-semibold text-zinc-100">Bahasa yang dikuasai di GitHub</h2>
 
@@ -164,6 +192,23 @@
 import { computed, onMounted, ref } from 'vue'
 
 const githubUsername = 'aruthen'
+const linkedInCertificates = [
+  {
+    title: 'Frontend Development Certificate',
+    issuer: 'LinkedIn Learning',
+    url: 'https://linkedin.com/in/marutha-wira-yuda-41704a112',
+  },
+  {
+    title: 'JavaScript Essential Training',
+    issuer: 'LinkedIn Learning',
+    url: 'https://linkedin.com/in/marutha-wira-yuda-41704a112',
+  },
+  {
+    title: 'Vue.js Skill Validation',
+    issuer: 'LinkedIn',
+    url: 'https://linkedin.com/in/marutha-wira-yuda-41704a112',
+  },
+]
 const languageStats = ref([])
 const isLoadingLanguages = ref(true)
 const languageError = ref('')
