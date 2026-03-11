@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       }
     }
 
-    const normalizedUrl = url.split('?')[0]
+    const normalizedUrl = (Array.isArray(url) ? url[0] : url).split('?')[0]
     const response = await fetch(normalizedUrl, { headers })
     if (!response.ok) {
       throw new Error('Failed to fetch Instagram page')
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       thumbnail_url: thumbnailUrl,
-      url,
+      url: normalizedUrl,
       postId,
     })
   } catch (error) {
