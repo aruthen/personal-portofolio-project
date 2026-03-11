@@ -58,6 +58,16 @@ Untuk development lokal endpoint API Vercel, jalankan:
 npx vercel dev
 ```
 
+## Integrasi Instagram (3 Postingan Terbaru)
+
+Fitur postingan Instagram otomatis menggunakan endpoint backend: `/api/instagram-latest`.
+
+Tambahkan Environment Variables di Vercel Project:
+- `INSTAGRAM_USER_ID`
+- `INSTAGRAM_ACCESS_TOKEN`
+
+Setelah environment variable disimpan, lakukan redeploy agar postingan terbaru tampil.
+
 ## Rencana Pengembangan Berikutnya
 - Tambah section Projects
 - Tambah Contact section

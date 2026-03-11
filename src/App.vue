@@ -132,12 +132,23 @@
 
         <section class="mt-8 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
           <h2 class="text-lg font-semibold text-zinc-100">Grafik Lari Mingguan (Strava)</h2>
-          <p class="mt-1 text-sm text-zinc-400">Kategori: All Run • Data 8 minggu terakhir dari akun Strava.</p>
+          <p class="mt-1 text-sm text-zinc-400">Data 8 minggu terakhir dari akun Strava.</p>
 
           <p v-if="isLoadingStrava" class="mt-4 text-sm text-zinc-300">Memuat data lari dari Strava...</p>
           <p v-else-if="stravaError" class="mt-4 text-sm text-red-300">{{ stravaError }}</p>
 
           <div v-else class="mt-4 space-y-4">
+            <div class="grid grid-cols-2 gap-3 text-xs text-zinc-300 sm:grid-cols-4">
+              <div class="rounded-md bg-zinc-800 px-3 py-2">
+                <p class="text-zinc-400">Total Jarak</p>
+                <p class="mt-1 text-sm font-semibold text-zinc-100">{{ stravaSummary.totalDistanceKm }} km</p>
+              </div>
+              <div class="rounded-md bg-zinc-800 px-3 py-2">
+                <p class="text-zinc-400">Total Lari</p>
+                <p class="mt-1 text-sm font-semibold text-zinc-100">{{ stravaSummary.totalRuns }} sesi</p>
+              </div>
+            </div>
+
             <div class="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
               <svg viewBox="0 0 100 42" class="h-44 w-full" preserveAspectRatio="none" role="img" aria-label="Grafik garis jarak lari mingguan">
                 <line x1="6" y1="36" x2="96" y2="36" stroke="#3f3f46" stroke-width="0.8" />
@@ -154,10 +165,8 @@
                   :key="point.key"
                   :cx="point.x"
                   :cy="point.y"
-                  :r="selectedWeek && selectedWeek.weekKey === point.key ? 1.7 : 1.2"
-                  :fill="selectedWeek && selectedWeek.weekKey === point.key ? '#f97316' : '#fdba74'"
-                  class="cursor-pointer"
-                  @click="selectedWeekKey = point.key"
+                  r="1.2"
+                  fill="#fdba74"
                 />
               </svg>
 
@@ -168,12 +177,53 @@
               </div>
             </div>
 
-            <div v-if="selectedWeek" class="rounded-lg border border-zinc-800 bg-zinc-800/60 px-4 py-3 text-sm text-zinc-200">
-              <p class="font-semibold">Minggu {{ selectedWeek.weekLabel }}</p>
-              <p class="mt-1 text-zinc-300">Distance / week: {{ selectedWeek.distanceKm }} km</p>
-              <p class="text-zinc-300">Time / week: {{ selectedWeek.movingTimeMinutes }} menit</p>
-              <p class="text-zinc-300">Elev gain / week: {{ selectedWeek.elevGainMeters }} m</p>
+            <div class="grid gap-2 text-xs text-zinc-300 sm:grid-cols-2">
+              <div
+                v-for="week in stravaWeeks"
+                :key="`meta-${week.weekKey}`"
+                class="rounded-md bg-zinc-800/60 px-3 py-2"
+              >
+                <span class="font-medium text-zinc-200">{{ week.weekLabel }}</span>
+                <span class="ml-2">{{ week.distanceKm }} km • {{ week.runCount }}x</span>
+              </div>
             </div>
+          </div>
+        </section>
+
+        <section class="mt-8 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-semibold text-zinc-100">Postingan Instagram</h2>
+              <p class="mt-1 text-sm text-zinc-400">Galeri foto terbaru dari akun Instagram @maruthamwy.</p>
+            </div>
+            <a
+              href="https://instagram.com/maruthamwy"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-md bg-zinc-800 px-3 py-2 text-xs font-medium text-zinc-200 transition hover:bg-zinc-700"
+            >
+              Buka Profil
+            </a>
+          </div>
+
+          <div class="mt-4 grid gap-4 md:grid-cols-3">
+            <article
+              v-for="(photo, index) in instagramPhotos"
+              :key="index"
+              class="group relative aspect-square overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900"
+            >
+              <a :href="photo.permalink" target="_blank" rel="noopener noreferrer">
+                <img
+                  :src="photo.mediaUrl"
+                  :alt="`Instagram post ${index + 1}`"
+                  class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition duration-300 group-hover:opacity-100 flex items-end">
+                  <p class="px-3 pb-3 text-sm font-medium text-white line-clamp-2">{{ photo.caption }}</p>
+                </div>
+              </a>
+            </article>
           </div>
         </section>
 
@@ -182,7 +232,7 @@
           <ul class="mt-3 space-y-2 text-sm text-zinc-300">
             <li>• Strava grafik lari: sudah terintegrasi via endpoint backend `/api/strava-weekly`.</li>
             <li>• LinkedIn sertifikat: bisa ditampilkan manual dari data profil/URL sertifikat.</li>
-            <li>• Instagram foto: bisa via embed post atau Instagram Graph API (perlu token).</li>
+            <li>• Instagram foto: section postingan sekarang memakai embed URL post/reel.</li>
           </ul>
         </section>
       </section>
@@ -197,10 +247,30 @@ const githubUsername = 'aruthen'
 const languageStats = ref([])
 const isLoadingLanguages = ref(true)
 const languageError = ref('')
+const instagramPhotos = ref([
+  {
+    mediaUrl: 'https://www.instagram.com/p/DS-IxdyCer9/media/',
+    caption: 'Morning run 🏃',
+    permalink: 'https://www.instagram.com/p/DS-IxdyCer9/',
+  },
+  {
+    mediaUrl: 'https://www.instagram.com/p/DU79Xn_CfSY/media/',
+    caption: 'Adventure time ✨',
+    permalink: 'https://www.instagram.com/p/DU79Xn_CfSY/',
+  },
+  {
+    mediaUrl: 'https://www.instagram.com/reel/DVgThIxiXvh/media/',
+    caption: 'Cycling journey 🚴',
+    permalink: 'https://www.instagram.com/reel/DVgThIxiXvh/',
+  },
+])
 const stravaWeeks = ref([])
 const isLoadingStrava = ref(true)
 const stravaError = ref('')
-const selectedWeekKey = ref('')
+const stravaSummary = ref({
+  totalDistanceKm: 0,
+  totalRuns: 0,
+})
 
 const githubWordCloud = computed(() =>
   languageStats.value.map((language, index) => ({
@@ -237,16 +307,6 @@ const stravaLineNodes = computed(() => {
 
 const stravaLinePoints = computed(() => stravaLineNodes.value.map((node) => `${node.x},${node.y}`).join(' '))
 
-const selectedWeek = computed(() => {
-  if (!stravaWeeks.value.length) {
-    return null
-  }
-
-  return (
-    stravaWeeks.value.find((week) => week.weekKey === selectedWeekKey.value) ||
-    stravaWeeks.value[stravaWeeks.value.length - 1]
-  )
-})
 
 async function fetchGithubLanguages() {
   isLoadingLanguages.value = true
@@ -318,9 +378,10 @@ async function fetchStravaWeekly() {
 
     stravaWeeks.value = data.weeks || []
 
-    selectedWeekKey.value = stravaWeeks.value.length
-      ? stravaWeeks.value[stravaWeeks.value.length - 1].weekKey
-      : ''
+    stravaSummary.value = data.summary || {
+      totalDistanceKm: 0,
+      totalRuns: 0,
+    }
   } catch (error) {
     stravaError.value =
       error instanceof Error ? error.message : 'Gagal memuat data Strava. Coba refresh lagi.'
