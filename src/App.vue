@@ -17,7 +17,7 @@
             v-else
             :src="photo.thumbnailUrl"
             :alt="`Instagram post ${index + 1}`"
-            class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            class="h-full w-full bg-black object-contain"
             loading="lazy"
           />
           <div class="absolute inset-0 bg-black/30 transition duration-300 group-hover:bg-black/10"></div>
