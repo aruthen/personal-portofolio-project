@@ -29,9 +29,19 @@ export default async function handler(req, res) {
 
     const html = await response.text()
 
-    // Extract og:image from HTML meta tags
-    const ogImageMatch = html.match(/<meta property="og:image" content="([^"]+["']?)/)
-    const thumbnailUrl = ogImageMatch ? ogImageMatch[1].replace(/["']$/, '') : null
+    // Extract og:image from HTML meta tags - handle both quoted and unquoted URLs
+    const ogImageMatch = html.match(/<meta\s+property="og:image"\s+content="([^"]+)/)
+    let thumbnailUrl = ogImageMatch ? ogImageMatch[1] : null
+    
+    // Decode HTML entities (&amp; -> &, etc)
+    if (thumbnailUrl) {
+      thumbnailUrl = thumbnailUrl
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&#x27;/g, "'")
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+    }
 
     return res.status(200).json({
       thumbnail_url: thumbnailUrl,
