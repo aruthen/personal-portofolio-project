@@ -15,7 +15,6 @@
           </div>
           <template v-else>
             <img
-              v-if="index !== 2"
               :src="photo.thumbnailUrl"
               :alt="`Instagram background ${index + 1}`"
               class="absolute inset-0 h-full w-full scale-110 object-cover blur-xl brightness-50"
@@ -24,10 +23,7 @@
             <img
               :src="photo.thumbnailUrl"
               :alt="`Instagram post ${index + 1}`"
-              :class="[
-                'relative z-10 h-full w-full object-center',
-                index === 2 ? 'object-cover' : 'object-contain',
-              ]"
+              class="relative z-10 h-full w-full object-contain object-center"
               loading="lazy"
             />
           </template>
