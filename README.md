@@ -1,6 +1,9 @@
-# 21 - Portfolio Vercel (Tahap 1)
+# Personal Portofolio Project (Tahap 1)
 
 Project portfolio nyata yang akan dikembangkan bertahap.
+
+## Nama Folder Project
+- `personal-portofolio-project`
 
 ## Scope Tahap 1
 - Landing section
