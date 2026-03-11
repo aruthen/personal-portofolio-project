@@ -1,6 +1,31 @@
 <template>
   <div class="min-h-screen bg-zinc-900 text-zinc-100">
-    <main class="mx-auto w-full max-w-4xl px-6 py-16">
+    <section class="grid grid-cols-1 overflow-hidden md:grid-cols-3">
+      <article
+        v-for="(photo, index) in instagramPhotos"
+        :key="index"
+        class="group relative aspect-[4/4] overflow-hidden bg-zinc-950"
+      >
+        <a :href="photo.postUrl" target="_blank" rel="noopener noreferrer">
+          <div v-if="photo.isLoading" class="flex h-full w-full items-center justify-center bg-zinc-800">
+            <svg class="h-8 w-8 animate-spin text-zinc-500" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <img
+            v-else
+            :src="photo.thumbnailUrl"
+            :alt="`Instagram post ${index + 1}`"
+            class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-black/30 transition duration-300 group-hover:bg-black/10"></div>
+        </a>
+      </article>
+    </section>
+
+    <main class="mx-auto w-full max-w-4xl px-6 py-10 md:px-6 md:py-14">
       <section class="w-full rounded-2xl border border-zinc-800 bg-zinc-900/70 p-8 md:p-10">
         <img
           src="/profile.svg"
@@ -9,13 +34,8 @@
         />
 
         <h1 class="mt-5 text-center text-3xl font-semibold text-zinc-50">Marutha Wira Yuda</h1>
-        <p class="mt-2 text-center text-sm text-zinc-400">Frontend Developer</p>
 
-        <div class="mt-10 grid gap-8 md:grid-cols-2">
-          <section>
-            <h2 class="text-lg font-semibold text-zinc-100">Social</h2>
-
-            <div class="mt-4 flex flex-wrap gap-3">
+        <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
               <a
                 href="https://instagram.com/maruthamwy"
                 target="_blank"
@@ -60,37 +80,6 @@
                   <path d="m10.46 2.4 4.44 8.73h-2.78L10.46 7.9l-1.66 3.23H6.02l4.44-8.73Zm3.08 8.73L18 20h-3.18l-1.28-2.46h-3.17L9.1 20H6l4.46-8.87h3.08Zm-1.58 3.17-1.03 2.04h2.09l-1.06-2.04Z" />
                 </svg>
               </a>
-            </div>
-          </section>
-
-          <section>
-            <h2 class="text-lg font-semibold text-zinc-100">Career</h2>
-            <ul class="mt-4 space-y-3 text-sm text-zinc-300">
-              <li class="rounded-lg border border-zinc-800 bg-zinc-800/40 p-3">Fokus pada pengembangan frontend modern berbasis Vue.</li>
-              <li class="rounded-lg border border-zinc-800 bg-zinc-800/40 p-3">Terbiasa membangun UI responsif dan maintainable.</li>
-              <li class="rounded-lg border border-zinc-800 bg-zinc-800/40 p-3">Aktif belajar deployment workflow dan praktik production-ready.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 class="text-lg font-semibold text-zinc-100">Job</h2>
-            <ul class="mt-4 space-y-2 text-sm text-zinc-300">
-              <li>• Membangun landing page dan company profile yang cepat.</li>
-              <li>• Mengubah desain Figma menjadi komponen Vue reusable.</li>
-              <li>• Optimasi performa dan aksesibilitas website.</li>
-              <li>• Integrasi API dan deployment ke Vercel.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 class="text-lg font-semibold text-zinc-100">Hobby</h2>
-            <div class="mt-4 flex flex-wrap gap-2 text-sm">
-              <span class="rounded-full bg-zinc-800 px-3 py-1 text-zinc-200">Running</span>
-              <span class="rounded-full bg-zinc-800 px-3 py-1 text-zinc-200">Road Cycling</span>
-              <span class="rounded-full bg-zinc-800 px-3 py-1 text-zinc-200">Learning Tech</span>
-              <span class="rounded-full bg-zinc-800 px-3 py-1 text-zinc-200">Content Creation</span>
-            </div>
-          </section>
         </div>
 
         <section class="mt-10 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
@@ -191,51 +180,6 @@
           </div>
         </section>
 
-        <section class="mt-8 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
-          <div class="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h2 class="text-lg font-semibold text-zinc-100">Postingan Instagram</h2>
-            </div>
-            <a
-              href="https://instagram.com/maruthamwy"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-700 bg-black text-zinc-100 transition hover:border-zinc-500 hover:bg-zinc-900"
-              aria-label="Instagram profile"
-            >
-              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true">
-                <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.8A3.95 3.95 0 0 0 3.8 7.75v8.5a3.95 3.95 0 0 0 3.95 3.95h8.5a3.95 3.95 0 0 0 3.95-3.95v-8.5a3.95 3.95 0 0 0-3.95-3.95h-8.5Zm8.95 1.35a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1ZM12 7.2a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6Zm0 1.8a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" />
-              </svg>
-            </a>
-          </div>
-
-          <div class="mt-4 grid gap-4 md:grid-cols-3">
-            <article
-              v-for="(photo, index) in instagramPhotos"
-              :key="index"
-              class="group relative aspect-square overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900"
-            >
-              <a :href="photo.postUrl" target="_blank" rel="noopener noreferrer">
-                <div v-if="photo.isLoading" class="h-full w-full flex items-center justify-center bg-zinc-800">
-                  <svg class="h-8 w-8 animate-spin text-zinc-500" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                </div>
-                <img
-                  v-else
-                  :src="photo.thumbnailUrl"
-                  :alt="`Instagram post ${index + 1}`"
-                  class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition duration-300 group-hover:opacity-100 flex items-end">
-                  <p class="px-3 pb-3 text-sm font-medium text-white line-clamp-2">{{ photo.caption }}</p>
-                </div>
-              </a>
-            </article>
-          </div>
-        </section>
       </section>
     </main>
   </div>
