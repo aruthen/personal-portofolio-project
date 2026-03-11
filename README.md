@@ -2,6 +2,9 @@
 
 Project portfolio nyata yang akan dikembangkan bertahap.
 
+## Live URL
+- https://marutha-wira.vercel.app
+
 ## Nama Folder Project
 - `personal-portofolio-project`
 
@@ -35,6 +38,8 @@ npm run preview
 3. Framework preset: Vite (auto detect)
 4. Build command: `npm run build`
 5. Output directory: `dist`
+
+Deployment production saat ini sudah aktif dan dapat diakses publik melalui URL di atas.
 
 ## Rencana Pengembangan Berikutnya
 - Tambah section Projects
