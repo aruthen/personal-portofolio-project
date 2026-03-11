@@ -126,9 +126,43 @@
         </section>
 
         <section class="mt-8 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
+          <h2 class="text-lg font-semibold text-zinc-100">Grafik Lari Mingguan (Strava)</h2>
+          <p class="mt-1 text-sm text-zinc-400">Data 8 minggu terakhir dari akun Strava.</p>
+
+          <p v-if="isLoadingStrava" class="mt-4 text-sm text-zinc-300">Memuat data lari dari Strava...</p>
+          <p v-else-if="stravaError" class="mt-4 text-sm text-red-300">{{ stravaError }}</p>
+
+          <div v-else class="mt-4 space-y-3">
+            <div class="grid grid-cols-2 gap-3 text-xs text-zinc-300 sm:grid-cols-4">
+              <div class="rounded-md bg-zinc-800 px-3 py-2">
+                <p class="text-zinc-400">Total Jarak</p>
+                <p class="mt-1 text-sm font-semibold text-zinc-100">{{ stravaSummary.totalDistanceKm }} km</p>
+              </div>
+              <div class="rounded-md bg-zinc-800 px-3 py-2">
+                <p class="text-zinc-400">Total Lari</p>
+                <p class="mt-1 text-sm font-semibold text-zinc-100">{{ stravaSummary.totalRuns }} sesi</p>
+              </div>
+            </div>
+
+            <div v-for="week in stravaWeeks" :key="week.weekKey">
+              <div class="mb-1 flex items-center justify-between text-sm text-zinc-300">
+                <span>{{ week.weekLabel }}</span>
+                <span>{{ week.distanceKm }} km • {{ week.runCount }}x</span>
+              </div>
+              <div class="h-2 rounded-full bg-zinc-700">
+                <div
+                  class="h-2 rounded-full bg-orange-400"
+                  :style="{ width: `${week.barPercent}%` }"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-8 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
           <h2 class="text-lg font-semibold text-zinc-100">Integrasi Data Lanjutan</h2>
           <ul class="mt-3 space-y-2 text-sm text-zinc-300">
-            <li>• Strava grafik lari: bisa, menggunakan OAuth Strava API lalu visualisasi chart.</li>
+            <li>• Strava grafik lari: sudah terintegrasi via endpoint backend `/api/strava-weekly`.</li>
             <li>• LinkedIn sertifikat: bisa ditampilkan manual dari data profil/URL sertifikat.</li>
             <li>• Instagram foto: bisa via embed post atau Instagram Graph API (perlu token).</li>
           </ul>
@@ -139,14 +173,19 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const githubUsername = 'aruthen'
 const languageStats = ref([])
 const isLoadingLanguages = ref(true)
 const languageError = ref('')
-
-const totalBytes = computed(() => languageStats.value.reduce((total, item) => total + item.bytes, 0))
+const stravaWeeks = ref([])
+const isLoadingStrava = ref(true)
+const stravaError = ref('')
+const stravaSummary = ref({
+  totalDistanceKm: 0,
+  totalRuns: 0,
+})
 
 async function fetchGithubLanguages() {
   isLoadingLanguages.value = true
@@ -204,5 +243,40 @@ async function fetchGithubLanguages() {
   }
 }
 
-onMounted(fetchGithubLanguages)
+async function fetchStravaWeekly() {
+  isLoadingStrava.value = true
+  stravaError.value = ''
+
+  try {
+    const response = await fetch('/api/strava-weekly')
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Gagal memuat data mingguan Strava.')
+    }
+
+    const weeks = data.weeks || []
+    const maxDistance = Math.max(...weeks.map((week) => week.distanceKm), 0)
+
+    stravaWeeks.value = weeks.map((week) => ({
+      ...week,
+      barPercent: maxDistance > 0 ? Math.round((week.distanceKm / maxDistance) * 100) : 0,
+    }))
+
+    stravaSummary.value = data.summary || {
+      totalDistanceKm: 0,
+      totalRuns: 0,
+    }
+  } catch (error) {
+    stravaError.value =
+      error instanceof Error ? error.message : 'Gagal memuat data Strava. Coba refresh lagi.'
+  } finally {
+    isLoadingStrava.value = false
+  }
+}
+
+onMounted(() => {
+  fetchGithubLanguages()
+  fetchStravaWeekly()
+})
 </script>

@@ -41,6 +41,23 @@ npm run preview
 
 Deployment production saat ini sudah aktif dan dapat diakses publik melalui URL di atas.
 
+## Integrasi Strava (Grafik Lari Mingguan)
+
+Fitur grafik lari mingguan menggunakan endpoint backend: `/api/strava-weekly`.
+
+Tambahkan Environment Variables di Vercel Project:
+- `STRAVA_CLIENT_ID`
+- `STRAVA_CLIENT_SECRET`
+- `STRAVA_REFRESH_TOKEN`
+
+Setelah environment variable disimpan, lakukan redeploy agar grafik Strava aktif.
+
+Untuk development lokal endpoint API Vercel, jalankan:
+
+```bash
+npx vercel dev
+```
+
 ## Rencana Pengembangan Berikutnya
 - Tambah section Projects
 - Tambah Contact section
