@@ -109,52 +109,70 @@
           <p v-if="isLoadingLanguages" class="mt-4 text-sm text-zinc-300">Memuat data bahasa dari GitHub...</p>
           <p v-else-if="languageError" class="mt-4 text-sm text-red-300">{{ languageError }}</p>
 
-          <div v-else class="mt-4 space-y-3">
-            <div v-for="language in languageStats" :key="language.name">
-              <div class="mb-1 flex items-center justify-between text-sm text-zinc-300">
-                <span>{{ language.name }}</span>
-                <span>{{ language.percentage }}%</span>
-              </div>
-              <div class="h-2 rounded-full bg-zinc-700">
-                <div
-                  class="h-2 rounded-full bg-emerald-400"
-                  :style="{ width: `${language.percentage}%` }"
-                ></div>
-              </div>
+          <div v-else class="mt-4 rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
+            <div class="flex min-h-40 flex-wrap items-center justify-center gap-3">
+              <span
+                v-for="word in githubWordCloud"
+                :key="word.name"
+                class="font-semibold text-emerald-300"
+                :style="{
+                  fontSize: `${word.fontSize}px`,
+                  opacity: word.opacity,
+                  transform: `rotate(${word.rotate}deg)`,
+                }"
+              >
+                {{ word.name }}
+              </span>
             </div>
+            <p class="mt-3 text-center text-xs text-zinc-500">
+              Ukuran kata merepresentasikan proporsi penggunaan bahasa pada repository publik GitHub.
+            </p>
           </div>
         </section>
 
         <section class="mt-8 rounded-xl border border-zinc-800 bg-zinc-800/30 p-5">
           <h2 class="text-lg font-semibold text-zinc-100">Grafik Lari Mingguan (Strava)</h2>
-          <p class="mt-1 text-sm text-zinc-400">Data 8 minggu terakhir dari akun Strava.</p>
+          <p class="mt-1 text-sm text-zinc-400">Kategori: All Run • Data 8 minggu terakhir dari akun Strava.</p>
 
           <p v-if="isLoadingStrava" class="mt-4 text-sm text-zinc-300">Memuat data lari dari Strava...</p>
           <p v-else-if="stravaError" class="mt-4 text-sm text-red-300">{{ stravaError }}</p>
 
-          <div v-else class="mt-4 space-y-3">
-            <div class="grid grid-cols-2 gap-3 text-xs text-zinc-300 sm:grid-cols-4">
-              <div class="rounded-md bg-zinc-800 px-3 py-2">
-                <p class="text-zinc-400">Total Jarak</p>
-                <p class="mt-1 text-sm font-semibold text-zinc-100">{{ stravaSummary.totalDistanceKm }} km</p>
-              </div>
-              <div class="rounded-md bg-zinc-800 px-3 py-2">
-                <p class="text-zinc-400">Total Lari</p>
-                <p class="mt-1 text-sm font-semibold text-zinc-100">{{ stravaSummary.totalRuns }} sesi</p>
+          <div v-else class="mt-4 space-y-4">
+            <div class="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
+              <svg viewBox="0 0 100 42" class="h-44 w-full" preserveAspectRatio="none" role="img" aria-label="Grafik garis jarak lari mingguan">
+                <line x1="6" y1="36" x2="96" y2="36" stroke="#3f3f46" stroke-width="0.8" />
+                <polyline
+                  :points="stravaLinePoints"
+                  fill="none"
+                  stroke="#fb923c"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle
+                  v-for="point in stravaLineNodes"
+                  :key="point.key"
+                  :cx="point.x"
+                  :cy="point.y"
+                  :r="selectedWeek && selectedWeek.weekKey === point.key ? 1.7 : 1.2"
+                  :fill="selectedWeek && selectedWeek.weekKey === point.key ? '#f97316' : '#fdba74'"
+                  class="cursor-pointer"
+                  @click="selectedWeekKey = point.key"
+                />
+              </svg>
+
+              <div class="mt-2 grid grid-cols-4 gap-2 text-[10px] text-zinc-400 sm:grid-cols-8">
+                <div v-for="week in stravaWeeks" :key="`label-${week.weekKey}`" class="truncate text-center">
+                  {{ week.weekLabel }}
+                </div>
               </div>
             </div>
 
-            <div v-for="week in stravaWeeks" :key="week.weekKey">
-              <div class="mb-1 flex items-center justify-between text-sm text-zinc-300">
-                <span>{{ week.weekLabel }}</span>
-                <span>{{ week.distanceKm }} km • {{ week.runCount }}x</span>
-              </div>
-              <div class="h-2 rounded-full bg-zinc-700">
-                <div
-                  class="h-2 rounded-full bg-orange-400"
-                  :style="{ width: `${week.barPercent}%` }"
-                ></div>
-              </div>
+            <div v-if="selectedWeek" class="rounded-lg border border-zinc-800 bg-zinc-800/60 px-4 py-3 text-sm text-zinc-200">
+              <p class="font-semibold">Minggu {{ selectedWeek.weekLabel }}</p>
+              <p class="mt-1 text-zinc-300">Distance / week: {{ selectedWeek.distanceKm }} km</p>
+              <p class="text-zinc-300">Time / week: {{ selectedWeek.movingTimeMinutes }} menit</p>
+              <p class="text-zinc-300">Elev gain / week: {{ selectedWeek.elevGainMeters }} m</p>
             </div>
           </div>
         </section>
@@ -173,7 +191,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const githubUsername = 'aruthen'
 const languageStats = ref([])
@@ -182,9 +200,52 @@ const languageError = ref('')
 const stravaWeeks = ref([])
 const isLoadingStrava = ref(true)
 const stravaError = ref('')
-const stravaSummary = ref({
-  totalDistanceKm: 0,
-  totalRuns: 0,
+const selectedWeekKey = ref('')
+
+const githubWordCloud = computed(() =>
+  languageStats.value.map((language, index) => ({
+    name: language.name,
+    fontSize: Math.max(14, Math.min(42, 12 + language.percentage * 0.8)),
+    opacity: 0.6 + Math.min(0.4, language.percentage / 100),
+    rotate: index % 2 === 0 ? -4 : 4,
+  })),
+)
+
+const stravaLineNodes = computed(() => {
+  if (!stravaWeeks.value.length) {
+    return []
+  }
+
+  const maxDistance = Math.max(...stravaWeeks.value.map((week) => week.distanceKm), 1)
+  const minX = 8
+  const maxX = 94
+  const minY = 6
+  const maxY = 34
+  const stepX = stravaWeeks.value.length > 1 ? (maxX - minX) / (stravaWeeks.value.length - 1) : 0
+
+  return stravaWeeks.value.map((week, index) => {
+    const ratio = week.distanceKm / maxDistance
+    const x = minX + index * stepX
+    const y = maxY - ratio * (maxY - minY)
+    return {
+      key: week.weekKey,
+      x: Number(x.toFixed(2)),
+      y: Number(y.toFixed(2)),
+    }
+  })
+})
+
+const stravaLinePoints = computed(() => stravaLineNodes.value.map((node) => `${node.x},${node.y}`).join(' '))
+
+const selectedWeek = computed(() => {
+  if (!stravaWeeks.value.length) {
+    return null
+  }
+
+  return (
+    stravaWeeks.value.find((week) => week.weekKey === selectedWeekKey.value) ||
+    stravaWeeks.value[stravaWeeks.value.length - 1]
+  )
 })
 
 async function fetchGithubLanguages() {
@@ -255,18 +316,11 @@ async function fetchStravaWeekly() {
       throw new Error(data.message || 'Gagal memuat data mingguan Strava.')
     }
 
-    const weeks = data.weeks || []
-    const maxDistance = Math.max(...weeks.map((week) => week.distanceKm), 0)
+    stravaWeeks.value = data.weeks || []
 
-    stravaWeeks.value = weeks.map((week) => ({
-      ...week,
-      barPercent: maxDistance > 0 ? Math.round((week.distanceKm / maxDistance) * 100) : 0,
-    }))
-
-    stravaSummary.value = data.summary || {
-      totalDistanceKm: 0,
-      totalRuns: 0,
-    }
+    selectedWeekKey.value = stravaWeeks.value.length
+      ? stravaWeeks.value[stravaWeeks.value.length - 1].weekKey
+      : ''
   } catch (error) {
     stravaError.value =
       error instanceof Error ? error.message : 'Gagal memuat data Strava. Coba refresh lagi.'

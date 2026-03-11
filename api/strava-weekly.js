@@ -87,11 +87,13 @@ export default async function handler(req, res) {
         weekLabel: formatWeekLabel(weekStart),
         distanceKm: 0,
         movingTimeMinutes: 0,
+        elevGainMeters: 0,
         runCount: 0,
       }
 
       current.distanceKm += (run.distance || 0) / 1000
       current.movingTimeMinutes += Math.round((run.moving_time || 0) / 60)
+      current.elevGainMeters += Math.round(run.total_elevation_gain || 0)
       current.runCount += 1
 
       weekMap.set(weekKey, current)
@@ -112,6 +114,7 @@ export default async function handler(req, res) {
           weekLabel: formatWeekLabel(weekStart),
           distanceKm: 0,
           movingTimeMinutes: 0,
+          elevGainMeters: 0,
           runCount: 0,
         },
       )
@@ -120,6 +123,7 @@ export default async function handler(req, res) {
     const normalizedWeeks = allWeeks.map((week) => ({
       ...week,
       distanceKm: Number(week.distanceKm.toFixed(2)),
+      elevGainMeters: Number(week.elevGainMeters.toFixed(0)),
     }))
 
     return res.status(200).json({
