@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const profilePhoto = new URL('../assets/css/potrait utha.png', import.meta.url).href
+const profilePhoto = '/images/potrait-utha.png'
 
 const identitySections = [
   {
