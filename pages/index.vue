@@ -4,34 +4,40 @@ const profilePhoto =
 
 const identitySections = [
   {
-    title: 'Fitness (Strava)',
+    title: 'Fitness',
     description: 'Melihat perjalanan olahraga dan aktivitas saya.',
-    link: 'https://www.strava.com',
+    link: 'https://www.strava.com/athletes/63049362',
     badge: 'Active',
+    icon: 'strava',
+    iconFile: 'strava.webp',
     image:
       'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80'
   },
   {
-    title: 'Coding (GitHub)',
+    title: 'Coding',
     description: 'Tempat saya belajar dan membangun project.',
-    link: 'https://github.com',
+    link: 'https://github.com/aruthen',
     badge: 'Builds',
+    icon: 'github',
     image:
       'https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=900&q=80'
   },
   {
-    title: 'Daily Life (Instagram)',
+    title: 'Daily Life',
     description: 'Cerita keseharian di luar layar.',
-    link: 'https://instagram.com',
+    link: 'https://www.instagram.com/maruthamwy/',
     badge: 'Moments',
+    icon: 'instagram',
     image:
       'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=80'
   },
   {
-    title: 'Digital Products (Gumroad)',
+    title: 'Digital Products',
     description: 'Template dan produk yang saya buat.',
     link: 'https://gumroad.com',
     badge: 'Products',
+    icon: 'gumroad',
+    iconFile: 'gumroad.webp',
     image:
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=80'
   }
@@ -61,7 +67,7 @@ const identitySections = [
 
           <div class="pt-3 flex flex-wrap gap-3">
             <BaseButton to="/about">Explore My World</BaseButton>
-            <BaseButton variant="outline" href="https://linkedin.com" target="_blank">Connect With Me</BaseButton>
+            <BaseButton variant="outline" href="https://www.linkedin.com/in/marutha-wira-yuda-41704a112/" target="_blank">Connect With Me</BaseButton>
           </div>
         </div>
       </div>
@@ -91,10 +97,15 @@ const identitySections = [
 
           <div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/45 to-transparent" />
 
-          <div class="absolute inset-x-0 bottom-0 space-y-2 p-4">
-            <BaseBadge tone="primary">{{ section.badge }}</BaseBadge>
-            <h3 class="text-lg font-semibold leading-tight">{{ section.title }}</h3>
-            <p class="line-clamp-2 text-xs text-text/85">{{ section.description }}</p>
+          <div class="absolute inset-x-0 bottom-0 flex flex-col p-4 h-full">
+            <div class="mt-auto space-y-2">
+              <BaseBadge tone="primary">{{ section.badge }}</BaseBadge>
+              <div class="flex items-center gap-2">
+                <img :src="`/icons/${section.iconFile || section.icon + '.svg'}`" :alt="`${section.title} icon`" :style="section.iconFile ? 'filter: brightness(0) saturate(100%) invert(1)' : ''" class="h-6 w-6 flex-shrink-0"/>
+                <h3 class="text-lg font-semibold leading-tight">{{ section.title }}</h3>
+              </div>
+            </div>
+            <p class="text-xs text-text/85 mt-1 min-h-[2.5rem] line-clamp-2">{{ section.description }}</p>
           </div>
         </a>
       </div>
