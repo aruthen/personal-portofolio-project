@@ -1,6 +1,5 @@
 <script setup lang="ts">
-const profilePhoto =
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80'
+const profilePhoto = new URL('../assets/css/potrait utha.png', import.meta.url).href
 
 const identitySections = [
   {
@@ -52,7 +51,7 @@ const identitySections = [
           <img
             :src="profilePhoto"
             alt="Foto profil Marutha Wira Yuda"
-            class="h-56 w-full object-cover sm:absolute sm:inset-0 sm:h-full"
+            class="h-56 w-full object-top object-cover sm:absolute sm:inset-0 sm:h-full"
             loading="lazy"
           >
         </div>
